@@ -1,4 +1,4 @@
-const BASE_URL = `http://localhost:5000`
+const BASE_URL = `https://horas-complementares-api.onrender.com`
 export const apiUrls = {
     userUrl: `${BASE_URL}/usuario`,
     turmasUrl: `${BASE_URL}/turmas`,
