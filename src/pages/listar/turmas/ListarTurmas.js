@@ -147,10 +147,10 @@ const ListarTurmas = () => {
                                             <td>{item?.curso_nome}</td>
                                             <td>
                                                 <div className={styles.acoesLinha}>
-                                                    <button onClick={() => navigation(`/turma/update/${item?.id}`)}>
+                                                    <button onClick={() => navigation(`/turma/update/${item?.id}`)} title="Alteração">
                                                         <MdOutlineEdit />
                                                     </button>
-                                                    <button onClick={() => remove(item.id)}>
+                                                    <button onClick={() => remove(item.id)} title="Exclusão">
                                                         <MdDeleteOutline />
                                                     </button>
                                                 </div>

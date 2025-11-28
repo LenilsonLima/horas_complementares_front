@@ -1,10 +1,19 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
+import { apiUrls } from "../../../apiUrls.js";
+import { MdDeleteOutline, MdOutlineEdit, MdKeyboardArrowRight, MdKeyboardArrowLeft, MdDone, MdCheck } from "react-icons/md";
+import DescriptionHeader from '../../../components/descriptionHeader/DescriptionHeader.js';
+import Loading from "../../../components/loading/Loading.js";
+import styles from './ListarCertificados.module.scss';
 import { useNavigate, useParams } from "react-router-dom";
-import { apiUrls } from "../../../apiUrls";
-import Loading from '../../../components/loading/Loading';
+
 const ListarCertificados = () => {
     const [certificados, setCertificados] = useState([]);
+
+    const [paginaAtual, setPaginaAtual] = useState(1);
+    const [totalRegistros, setTotalRegistros] = useState(0);
+    const [totalPaginas, setTotalPaginas] = useState(0);
+    const [registrosPorPagina, setRegistrosPorPagina] = useState(10);
 
     const params = useParams();
     const navigation = useNavigate();
@@ -67,91 +76,93 @@ const ListarCertificados = () => {
         const confirmDelete = window.confirm(`Deseja validar o certificado "${descricao}"`);
     }
 
+    useEffect(() => {
+        setPaginaAtual(1);
+    }, [registrosPorPagina]);
+
+    const handleNextPage = () => {
+        if (paginaAtual < totalPaginas) {
+            setPaginaAtual(paginaAtual + 1);
+        }
+    };
+
+    const handlePrevPage = () => {
+        if (paginaAtual > 1) {
+            setPaginaAtual(paginaAtual - 1);
+        }
+    };
+
     if (loading) {
         return (
             <Loading />
         )
     }
-    return (
-        <div>
-            <button onClick={() => navigation('/certificado/create')} style={{ height: 50, width: 50, borderRadius: 50, border: 'none', cursor: 'pointer', position: 'fixed', bottom: 50, right: 50, fontSize: 25 }}>+</button>
-            {certificados?.length > 0 ?
-                <table style={{ width: 1200, textAlign: "left", borderCollapse: 'collapse', border: 'solid 1px' }}>
-                    <thead>
-                        <tr style={{ backgroundColor: "#f2f2f2" }}>
-                            <th style={{ fontSize: 12, textAlign: 'center', padding: 5 }}>descricao</th>
-                            <th style={{ fontSize: 12, textAlign: 'center', padding: 5 }}>user</th>
-                            <th style={{ fontSize: 12, textAlign: 'center', padding: 5 }}>data_emissao</th>
-                            <th style={{ fontSize: 12, textAlign: 'center', padding: 5 }}>validade</th>
-                            <th style={{ fontSize: 12, textAlign: 'center', padding: 5 }}>status</th>
-                            <th style={{ fontSize: 12, textAlign: 'center', padding: 5 }}>upload</th>
-                            <th style={{ fontSize: 12, textAlign: 'center', padding: 5 }}>tipo</th>
-                            <th style={{ fontSize: 12, textAlign: 'center', padding: 5 }}>ações</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {certificados?.map((item, index) => (
-                            <tr key={item?.id} style={{ backgroundColor: index % 2 == 0 ? "#fff" : "#f2f2f2", color: "#000" }}>
-                                <td style={{ fontSize: 12, textAlign: 'center', padding: 5 }}>{item?.descricao}</td>
-                                <td style={{ fontSize: 12, textAlign: 'center', padding: 5 }}>{item?.usuarios_nome}</td>
-                                <td style={{ fontSize: 12, textAlign: 'center', padding: 5 }}>{String(item?.data_emissao).substring(0, 10).split('-').reverse().join('/')}</td>
-                                <td style={{ fontSize: 12, textAlign: 'center', padding: 5 }}>{String(item?.validade).substring(0, 10).split('-').reverse().join('/')}</td>
-                                <td style={{ fontSize: 12, textAlign: 'center', padding: 5 }}>{item?.status === 0 && 'pendente'}{item?.status === 1 && 'aprovado'}{item?.status === 2 && 'rejeitado'}</td>
-                                <td style={{ fontSize: 12, textAlign: 'center', padding: 5 }}>{String(item?.created_at).substring(0, 10).split('-').reverse().join('/')}</td>
-                                <td style={{ fontSize: 12, textAlign: 'center', padding: 5 }}><a href={item?.s3_url} target="_blank">abrir</a></td>
-                                <td style={{ padding: 5 }}>
 
-                                    <button
-                                        style={{
-                                            marginRight: "5px",
-                                            padding: "5px 10px",
-                                            border: "none",
-                                            backgroundColor: "#4CAF50",
-                                            color: "white",
-                                            cursor: "pointer",
-                                            borderRadius: "3px"
-                                        }}
-                                        onClick={() => editar(item.id, item.usuario_id)}
-                                    >
-                                        Editar
-                                    </button>
-                                    <button
-                                        style={{
-                                            padding: "5px 10px",
-                                            marginRight: "5px",
-                                            border: "none",
-                                            backgroundColor: "#f44336",
-                                            color: "white",
-                                            cursor: "pointer",
-                                            borderRadius: "3px"
-                                        }}
-                                        onClick={() => remove(item.id)}
-                                    >
-                                        Excluir
-                                    </button>
-                                    <button
-                                        style={{
-                                            padding: "5px 10px",
-                                            marginRight: "5px",
-                                            border: "none",
-                                            backgroundColor: "#36aef4ff",
-                                            color: "white",
-                                            cursor: "pointer",
-                                            borderRadius: "3px"
-                                        }}
-                                        onClick={() => handleValidar(item.descricao)}
-                                    >
-                                        Validar
-                                    </button>
-                                </td>
-                            </tr>
-                        ))}
-                    </tbody>
-                </table>
-                :
-                <p>nenhum informação foi localizada</p>
-            }
+    return (
+        <div className={styles.containerListarCertificados}>
+            <div className={styles.areaListarCertificados}>
+                <DescriptionHeader descricao="Listagem de Certificados" />
+                <button onClick={() => navigation('/curso/create')} style={{ height: 50, width: 50, borderRadius: 50, border: 'none', cursor: 'pointer', position: 'fixed', bottom: 50, right: 50, fontSize: 25 }}>+</button>
+                <div className={styles.tabelaCertificadosScroll}>
+                    <table>
+                        {certificados?.length > 0 ?
+                            <>
+                                <thead>
+                                    <tr>
+                                        <th>Descricao</th>
+                                        <th>User</th>
+                                        <th>Data Emissao</th>
+                                        <th>Validade</th>
+                                        <th>Status</th>
+                                        <th>Upload</th>
+                                        <th>Ações</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {certificados?.map((item, index) => (
+                                        <tr key={item?.id}>
+                                            <td><a href={item?.s3_url} target="_blank">{item?.descricao}</a></td>
+                                            <td>{item?.usuarios_nome}</td>
+                                            <td>{String(item?.data_emissao).substring(0, 10).split('-').reverse().join('/')}</td>
+                                            <td>{String(item?.validade).substring(0, 10).split('-').reverse().join('/')}</td>
+                                            <td>{item?.status === 0 && 'pendente'}{item?.status === 1 && 'aprovado'}{item?.status === 2 && 'rejeitado'}</td>
+                                            <td>{String(item?.created_at).substring(0, 10).split('-').reverse().join('/')}</td>
+                                            <td style={{ padding: 5 }}>
+                                                <div className={styles.acoesLinha}>
+                                                    <button onClick={() => editar(item.id, item.usuario_id)} title="Alteração">
+                                                        <MdOutlineEdit />
+                                                    </button>
+                                                    <button onClick={() => remove(item.id)} title="Exclusão">
+                                                        <MdDeleteOutline />
+                                                    </button>
+                                                    <button onClick={() => handleValidar(item.descricao)} title="Validar">
+                                                        <MdCheck />
+                                                    </button>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </>
+                            :
+                            <p>Nenhuma informação foi localizada</p>
+                        }
+                    </table>
+                </div>
+                {certificados?.length > 0 &&
+                    <div className={styles.controlePaginacao}>
+                        <button onClick={handlePrevPage} disabled={paginaAtual <= 1}>
+                            <MdKeyboardArrowLeft />
+                        </button>
+                        <span>{paginaAtual} de {totalPaginas} ({totalRegistros} registros)</span>
+                        <button onClick={handleNextPage} disabled={paginaAtual >= totalPaginas}>
+                            <MdKeyboardArrowRight />
+                        </button>
+                    </div>
+                }
+            </div>
         </div>
-    )
-}
+    );
+};
+
 export default ListarCertificados;

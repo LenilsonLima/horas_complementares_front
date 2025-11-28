@@ -123,13 +123,13 @@ const ListarCursos = () => {
                                             <td>{item?.id}</td>
                                             <td>{item?.nome}</td>
                                             <td>{item?.ano_inicio}</td>
-                                            <td>{item?.horas_complementares}hrs</td>
+                                            <td>{item?.horas_complementares}</td>
                                             <td style={{ padding: 5 }}>
                                                 <div className={styles.acoesLinha}>
-                                                    <button onClick={() => navigation(`/curso/update/${item?.id}`)}>
+                                                    <button onClick={() => navigation(`/curso/update/${item?.id}`)} title="Alteração">
                                                         <MdOutlineEdit />
                                                     </button>
-                                                    <button onClick={() => remove(item.id)}>
+                                                    <button onClick={() => remove(item.id)} title="Exclusão">
                                                         <MdDeleteOutline />
                                                     </button>
                                                 </div>

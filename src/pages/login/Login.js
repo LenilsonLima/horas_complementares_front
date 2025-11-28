@@ -25,11 +25,11 @@ const Login = () => {
 
         try {
             setLoading(true);
-
-            const response = await axios.post(apiUrls.loginAdmUrl, formValues, { headers: { "Content-Type": "application/json", }, withCredentials: true });
+            
+            const response = await axios.post(apiUrls.loginAdmUrl, formValues, requestOptions);
 
             // Armazenar o token no cookie
-            // Cookies.set('token', response.data.retorno.registros.token, { expires: 7, secure: false, sameSite: 'Lax' });
+            Cookies.set('token', response.data.retorno.registros.token, { expires: 7, secure: false, sameSite: 'Lax' });
 
             // Redirecionar para a página inicial
             navigation('/');
@@ -53,11 +53,11 @@ const Login = () => {
                     <DescriptionHeader descricao="Autenticação de acesso - Administrativo" />
                     <form onSubmit={handleSubmit}>
                         <label htmlFor="email">
-                            <span>Email</span>
+                            <apan>Email</apan>
                             <input type="email" id="email" required name="email" />
                         </label>
                         <label htmlFor="senha">
-                            <span>Senha</span>
+                            <apan>Senha</apan>
                             <input type="password" id="senha" name="senha" />
                         </label>
                         <input type="submit" className="btn" value="Entrar" />

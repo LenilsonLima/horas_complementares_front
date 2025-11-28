@@ -106,7 +106,7 @@ const Home = () => {
         <div className={styles.containerListarUsuarios}>
             <div className={styles.areaListarUsuarios}>
                 <DescriptionHeader descricao="Listagem de Usuários" />
-                <button onClick={() => navigate('/user/create')} style={{ height: 50, width: 50, borderRadius: 50, border: 'none', cursor: 'pointer', position: 'fixed', bottom: 50, right: 50, fontSize: 25, backgroundColor: '#107321', color: '#fff' }}>+</button>
+                <button onClick={() => navigate('/user/create')} style={{ height: 50, width: 50, borderRadius: 50, border: 'none', cursor: 'pointer', position: 'fixed', bottom: 50, right: 50, fontSize: 25 }}>+</button>
                 {Cookies.get('token') && decoded?.tipo === 1 && (
                     <select onChange={(e) => setTipoUser(Number(e.target.value))} value={tipoUser}>
                         <option value="0">Aluno</option>
@@ -142,13 +142,13 @@ const Home = () => {
                                     <td>{formatDate(item.last_login || "****")}</td>
                                     <td>
                                         <div className={styles.acoesLinha}>
-                                            <button onClick={() => editar(item.id)}>
+                                            <button onClick={() => editar(item.id)} title="Alteração">
                                                 <MdOutlineEdit />
                                             </button>
-                                            <button onClick={() => remove(item.id)}>
+                                            <button onClick={() => remove(item.id)} title="Exclusão">
                                                 <MdDeleteOutline />
                                             </button>
-                                            <button onClick={() => navigate(`/certificado/read/${item.id}`)}>
+                                            <button onClick={() => navigate(`/certificado/read/${item.id}`)} title="Certificados">
                                                 <GrDocumentPdf />
                                             </button>
                                         </div>
