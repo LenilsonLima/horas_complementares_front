@@ -21,15 +21,16 @@ const Login = () => {
             headers: {
                 "Content-Type": "application/json",
             },
+            withCredentials: true
         };
 
         try {
             setLoading(true);
-            
+
             const response = await axios.post(apiUrls.loginAdmUrl, formValues, requestOptions);
 
             // Armazenar o token no cookie
-            Cookies.set('token', response.data.retorno.registros.token, { expires: 7, secure: false, sameSite: 'Lax' });
+            // Cookies.set('token', response.data.retorno.registros.token, { expires: 7, secure: false, sameSite: 'Lax' });
 
             // Redirecionar para a página inicial
             navigation('/');

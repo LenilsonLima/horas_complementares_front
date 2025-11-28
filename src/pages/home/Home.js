@@ -81,24 +81,24 @@ const Home = () => {
     const handlePrevPage = () => paginaAtual > 1 && setPaginaAtual(paginaAtual - 1);
     const [decoded, setDecoded] = useState({});
 
-    const decodeJwt = () => {
-        const token = Cookies.get('token');
-        if (token) {
-            try {
-                const decodedData = jwtDecode(token);
-                setDecoded(decodedData);
-            } catch (error) {
-                console.error("Erro ao decodificar token:", error);
-                setDecoded({ tipo: 0 });
-            }
-        } else {
-            setDecoded({ tipo: 0 });
-        }
-    };
+    // const decodeJwt = () => {
+    //     const token = Cookies.get('token');
+    //     if (token) {
+    //         try {
+    //             const decodedData = jwtDecode(token);
+    //             setDecoded(decodedData);
+    //         } catch (error) {
+    //             console.error("Erro ao decodificar token:", error);
+    //             setDecoded({ tipo: 0 });
+    //         }
+    //     } else {
+    //         setDecoded({ tipo: 0 });
+    //     }
+    // };
 
-    useEffect(() => {
-        decodeJwt();
-    }, []);
+    // useEffect(() => {
+    //     decodeJwt();
+    // }, []);
 
     if (loading) return <Loading />;
 

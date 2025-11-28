@@ -13,6 +13,7 @@ const LoginGoogle = ({ setLoading }) => {
       headers: {
         "Content-Type": "application/json",
       },
+      withCredentials: true
     };
 
     try {
@@ -22,11 +23,11 @@ const LoginGoogle = ({ setLoading }) => {
       // Verifique se a resposta contém o token e armazene no cookie
       if (result.data?.retorno?.registros?.token) {
         // Armazenar o token no cookie com opções de segurança
-        Cookies.set('token', result.data.retorno.registros.token, {
-          expires: 7, // Expira em 7 dias
-          secure: false, // Garante que o cookie seja enviado apenas via HTTPS
-          sameSite: 'Lax', // Previne o envio do cookie em requisições de outros sites
-        });
+        // Cookies.set('token', result.data.retorno.registros.token, {
+        //   expires: 7, // Expira em 7 dias
+        //   secure: false, // Garante que o cookie seja enviado apenas via HTTPS
+        //   sameSite: 'Lax', // Previne o envio do cookie em requisições de outros sites
+        // });
         navigation('/');
       } else {
         throw new Error("Token não encontrado na resposta.");

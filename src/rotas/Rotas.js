@@ -20,82 +20,63 @@ import Login from "../pages/login/Login";
 const router = createBrowserRouter([
     {
         path: "/",
-        element: <RotasPrivadas />,
         children: [
             {
+                // READ
                 path: "",
-                element: <Verify />,
-                children: [
-                    // READ
-                    {
-                        path: "",
-                        element: <Home />
-                    },
-                    {
-                        path: "turma/read",
-                        element: <ListarTurmas />
-                    },
-                    {
-                        path: "curso/read",
-                        element: <ListarCursos />
-                    },
-                    {
-                        path: "certificado/read/:usuario_id",
-                        element: <ListarCertificados />
-                    },
-
-                    // UPDATE
-                    {
-                        path: "usuario/update/:usuario_id",
-                        element: <AlterarUser />
-                    },
-                    {
-                        path: "turma/update/:turma_id",
-                        element: <AlterarTurma />
-                    },
-                    {
-                        path: "curso/update/:curso_id",
-                        element: <AlterarCurso />
-                    },
-                    {
-                        path: "certificado/update/:certificado_id/:usuario_id",
-                        element: <AlterarCertificado />
-                    },
-
-                    // CREATE
-                    {
-                        path: "user/create",
-                        element: <NovoUser />
-                    },
-                    {
-                        path: "turma/create",
-                        element: <NovaTurma />
-                    },
-                    {
-                        path: "curso/create",
-                        element: <NovoCurso />
-                    },
-                    {
-                        path: "certificado/create",
-                        element: <NovoCertificado />
-                    },
-                ]
-            }
-        ]
-    },
-    {
-        path: '/login',
-        element: <RotasPublicas />,
-        children: [
+                element: <Home />
+            },
             {
-                path: '',
-                element: <Verify />,
-                children: [
-                    {
-                        path: '',
-                        element: <Login />,
-                    }
-                ]
+                path: "turma/read",
+                element: <ListarTurmas />
+            },
+            {
+                path: "curso/read",
+                element: <ListarCursos />
+            },
+            {
+                path: "certificado/read/:usuario_id",
+                element: <ListarCertificados />
+            },
+
+            // UPDATE
+            {
+                path: "usuario/update/:usuario_id",
+                element: <AlterarUser />
+            },
+            {
+                path: "turma/update/:turma_id",
+                element: <AlterarTurma />
+            },
+            {
+                path: "curso/update/:curso_id",
+                element: <AlterarCurso />
+            },
+            {
+                path: "certificado/update/:certificado_id/:usuario_id",
+                element: <AlterarCertificado />
+            },
+
+            // CREATE
+            {
+                path: "user/create",
+                element: <NovoUser />
+            },
+            {
+                path: "turma/create",
+                element: <NovaTurma />
+            },
+            {
+                path: "curso/create",
+                element: <NovoCurso />
+            },
+            {
+                path: "certificado/create",
+                element: <NovoCertificado />
+            },
+            {
+                path: 'login',
+                element: <Login />,
             }
         ]
     }
