@@ -2,7 +2,8 @@ import axios from "axios";
 
 export const createAxiosConfig = (setLoading) => {
     const axiosConfig = axios.create({
-        baseURL: "http://localhost:5000",
+        baseURL: "https://horas-complementares-api.onrender.com",
+        // baseURL: "http://localhost:5000",
         timeout: 10000,
         headers: { 'Content-Type': 'application/json' },
         withCredentials: true
