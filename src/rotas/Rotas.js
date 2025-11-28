@@ -17,7 +17,7 @@ import Verify from "../modules/Verify";
 const router = createBrowserRouter([
     {
         path: "/",
-        // element: <Verify />,
+        element: <Verify />,
         children: [
             // READ
             {
