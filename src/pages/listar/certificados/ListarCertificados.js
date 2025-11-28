@@ -1,11 +1,13 @@
-import axios from "axios";
 import { useEffect, useState } from "react";
 import { apiUrls } from "../../../apiUrls.js";
-import { MdDeleteOutline, MdOutlineEdit, MdKeyboardArrowRight, MdKeyboardArrowLeft, MdDone, MdCheck } from "react-icons/md";
+import { MdDeleteOutline, MdOutlineEdit, MdKeyboardArrowRight, MdKeyboardArrowLeft, MdCheck } from "react-icons/md";
 import DescriptionHeader from '../../../components/descriptionHeader/DescriptionHeader.js';
 import Loading from "../../../components/loading/Loading.js";
 import styles from './ListarCertificados.module.scss';
 import { useNavigate, useParams } from "react-router-dom";
+import { createAxiosConfig } from "../../../createAxiosConfig.js";
+import { requestDados } from "../../../funcoes/requestDados";
+import { requestDelete } from "../../../funcoes/requestDelete";
 
 const ListarCertificados = () => {
     const [certificados, setCertificados] = useState([]);
@@ -14,28 +16,14 @@ const ListarCertificados = () => {
     const [totalRegistros, setTotalRegistros] = useState(0);
     const [totalPaginas, setTotalPaginas] = useState(0);
     const [registrosPorPagina, setRegistrosPorPagina] = useState(10);
+    const [loading, setLoading] = useState(true);
+    const axiosConfig = createAxiosConfig(setLoading);
 
     const params = useParams();
     const navigation = useNavigate();
-    const [loading, setLoading] = useState(false);
-    const requestCertificados = async () => {
-        const requestOptions = {
-            headers: {
-                "Content-Type": "application/json",
-            },
-            withCredentials: true
-        };
 
-        try {
-            setCertificados([]);
-            setLoading(true);
-            const response = await axios.get(`${apiUrls.certificadosUrl}/${params.usuario_id}`, requestOptions);
-            setCertificados(response.data.registros);
-        } catch (error) {
-            alert(error.response.data.retorno.mensagem);
-        } finally {
-            setLoading(false);
-        }
+    const requestCertificados = async () => {
+        requestDados(axiosConfig, `${apiUrls.certificadosUrl}/${params.usuario_id}`, setLoading, setCertificados, setTotalRegistros, setTotalPaginas);
     }
     useEffect(() => {
         requestCertificados();
@@ -46,34 +34,19 @@ const ListarCertificados = () => {
     }
 
     const remove = async (certificado_id) => {
-        // Exibir uma mensagem de confirmação
-        const confirmDelete = window.confirm("Tem certeza de que deseja excluir este certificado? Esta ação não pode ser desfeita.");
-
-        if (!confirmDelete) {
-            // Se o usuário cancelar, interrompa a execução
-            return;
-        }
-
-        const requestOptions = {
-            headers: {
-                "Content-Type": "application/json",
-            },
-            withCredentials: true
-        };
-
-        try {
-            setLoading(true);
-            const response = await axios.delete(`${apiUrls.certificadosUrl}/${certificado_id}`, requestOptions);
-            alert(response.data.retorno.mensagem);
-        } catch (error) {
-            alert(error.response.data.retorno.mensagem);
-        } finally {
-            requestCertificados();
-        }
+        requestDelete(
+            "Tem certeza de que deseja excluir este certificado? Esta ação não pode ser desfeita.",
+            axiosConfig,
+            `${apiUrls.certificadosUrl}/${certificado_id}`,
+            setLoading,
+            requestCertificados,
+            setPaginaAtual,
+            paginaAtual
+        );
     }
 
     const handleValidar = async (descricao) => {
-        const confirmDelete = window.confirm(`Deseja validar o certificado "${descricao}"`);
+        const confirmValidar = window.confirm(`Deseja validar o certificado "${descricao}"`);
     }
 
     useEffect(() => {

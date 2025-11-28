@@ -1,9 +1,11 @@
-import { useContext, useEffect, useState } from 'react';
-import { Outlet, useLocation, useNavigate } from 'react-router-dom';
-import Cookies from 'js-cookie';
+import { useContext, useState } from 'react';
+import { Outlet, useNavigate } from 'react-router-dom';
 import { ContextGlobal } from '../context/GlobalContext';
-import { jwtDecode } from "jwt-decode";
 import './Veryfi.scss';
+import { apiUrls } from '../apiUrls';
+import { createAxiosConfig } from '../createAxiosConfig';
+import Loading from '../components/loading/Loading';
+
 const HeaderNavigation = ({ tipo, onLogout, onNavigate, usuario_id }) => {
     const adminButtons = [
         { label: 'Home', path: '/' },
@@ -16,7 +18,8 @@ const HeaderNavigation = ({ tipo, onLogout, onNavigate, usuario_id }) => {
         { label: 'Certificados', path: `/certificado/read/${usuario_id}` },
     ];
 
-    const buttons = tipo === 1 ? adminButtons : commonButtons;
+    // const buttons = tipo === 1 ? adminButtons : commonButtons;
+    const buttons = adminButtons;
 
     return (
         <ul style={{ display: 'flex', columnGap: 15, listStyle: 'none', color: '#83c483', padding: 5 }}>
@@ -31,40 +34,21 @@ const HeaderNavigation = ({ tipo, onLogout, onNavigate, usuario_id }) => {
 const Verify = () => {
     const [decoded, setDecoded] = useState({});
     const [loading, setLoading] = useState(false);
-    const location = useLocation();
     const navigation = useNavigate();
     const { cursos, setCursoId, cursoId, registrosPorPagina, setRegistrosPorPagina } = useContext(ContextGlobal);
+    const axiosConfig = createAxiosConfig(setLoading);
 
-    const handleLogout = () => {
-        Cookies.remove('token');
-        navigation('/login');
-    };
+    const handleLogout = async () => {
+        try {
+            setLoading(true);
 
-    const decodeJwt = () => {
-        const token = Cookies.get('token');
-        if (token) {
-            try {
-                setLoading(true);
-                const decodedData = jwtDecode(token);
-                setDecoded(decodedData);
-            } catch (error) {
-                console.error("Erro ao decodificar token:", error);
-                setDecoded({ tipo: 0 });
-            } finally {
-                setLoading(false);
-            }
-        } else {
-            setDecoded({ tipo: 0 });
+            axiosConfig.get(apiUrls.logoutUrl);
+            navigation('/login');
+
+        } catch (error) {
+            alert(error.response.data.retorno.mensagem);
         }
     };
-
-    useEffect(() => {
-        decodeJwt();
-    }, [location]);
-
-    if (loading) {
-        return <p>Validando credenciais, aguarde...</p>;
-    }
 
     return (
         <div className='container-verify'>
@@ -75,38 +59,28 @@ const Verify = () => {
                 </div>
                 <div className='verify-filter'>
                     <div className='verify-filter-area'>
-                        {decoded?.tipo === 1 && (
-                            <select onChange={(e) => setCursoId(e.target.value)} value={cursoId}>
-                                <option>- selecione um curso -</option>
-                                {cursos?.map((item) => (
-                                    <option value={item?.id} key={item?.id}>{item.nome}</option>
-                                ))}
-                            </select>
-                        )}
+                        <select onChange={(e) => setCursoId(e.target.value)} value={cursoId}>
+                            <option>- selecione um curso -</option>
+                            {cursos?.map((item) => (
+                                <option value={item?.id} key={item?.id}>{item.nome}</option>
+                            ))}
+                        </select>
                     </div>
-                    {Cookies.get('token') && (
-                        <HeaderNavigation
-                            usuario_id={decoded?.usuario_id}
-                            tipo={decoded?.tipo}
-                            onLogout={handleLogout}
-                            onNavigate={(path) => navigation(path)}
-                        />
-                    )}
+                    <HeaderNavigation
+                        usuario_id={decoded?.usuario_id}
+                        tipo={decoded?.tipo}
+                        onLogout={handleLogout}
+                        onNavigate={(path) => navigation(path)}
+                    />
                 </div>
             </div>
 
-
-
             <div className='area-verify'>
-                {/* {decoded?.tipo === 1 ? (
-                    <>
-
-                        <AdmRotas />
-                    </>
-                ) : (
-                    <AlunoRotas />
-                )} */}
-                <Outlet />
+                {loading ?
+                    <Loading />
+                    :
+                    <Outlet />
+                }
             </div>
         </div >
     );

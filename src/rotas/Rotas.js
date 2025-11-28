@@ -1,8 +1,4 @@
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
-import RotasPrivadas from "./RotasPivadas";
-import Verify from "../modules/Verify";
-import RotasPublicas from "./RotasPublicas";
-
 import Home from "../pages/home/Home";
 import ListarTurmas from "../pages/listar/turmas/ListarTurmas";
 import ListarCursos from "../pages/listar/cursos/ListarCursos";
@@ -16,13 +12,15 @@ import NovaTurma from "../pages/novo/turma/NovaTurma";
 import NovoCurso from "../pages/novo/curso/NovoCurso";
 import NovoCertificado from "../pages/novo/certificado/NovoCertificado";
 import Login from "../pages/login/Login";
+import Verify from "../modules/Verify";
 
 const router = createBrowserRouter([
     {
         path: "/",
+        element: <Verify />,
         children: [
+            // READ
             {
-                // READ
                 path: "",
                 element: <Home />
             },

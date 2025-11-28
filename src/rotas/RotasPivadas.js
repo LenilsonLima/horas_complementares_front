@@ -1,10 +1,12 @@
-import { Navigate, Outlet, useNavigate } from "react-router-dom";
-import Cookies from 'js-cookie';
+import { Navigate, Outlet } from "react-router-dom";
+import { useAuth } from "../useAuth";
 
 
 const RotasPrivadas = () => {
-    const token = Cookies.get('token');
-    return token ? (
+    const { user } = useAuth();
+    console.log(user);
+
+    return user?.autenticado ? (
         <Outlet />
     ) : <Navigate to="/login" />;
 };

@@ -1,4 +1,3 @@
-import axios from "axios";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { apiUrls } from "../../../apiUrls.js";
@@ -6,38 +5,23 @@ import { MdDeleteOutline, MdOutlineEdit, MdKeyboardArrowRight, MdKeyboardArrowLe
 import DescriptionHeader from '../../../components/descriptionHeader/DescriptionHeader.js';
 import Loading from "../../../components/loading/Loading.js";
 import styles from './ListarCursos.module.scss';
-
+import { createAxiosConfig } from "../../../createAxiosConfig.js";
+import { requestDelete } from "../../../funcoes/requestDelete.js";
+import { requestDados } from "../../../funcoes/requestDados.js";
 const ListarCursos = () => {
     const [cursos, setCursos] = useState([]);
     const navigation = useNavigate();
-    const [loading, setLoading] = useState(false);
+    const [loading, setLoading] = useState(true);
     // Página atual e número de registros por página
     const [paginaAtual, setPaginaAtual] = useState(1);
     const [totalRegistros, setTotalRegistros] = useState(0);
     const [totalPaginas, setTotalPaginas] = useState(0);
     const [registrosPorPagina, setRegistrosPorPagina] = useState(10);
+    const axiosConfig = createAxiosConfig(setLoading);
 
     const requestCursos = async () => {
-        const requestOptions = {
-            headers: {
-                "Content-Type": "application/json",
-            },
-            withCredentials: true, // Ensures that cookies are sent with the request
-        };
-
-        try {
-            setCursos([]);
-            setLoading(true);
-            const url = `${apiUrls.cursosUrl}?page=${paginaAtual}&limit=${registrosPorPagina}`;
-            const response = await axios.get(url, requestOptions);
-            setCursos(response.data.registros);
-            setTotalRegistros(response.data.totalRegistros);  // Supõe que a API retorna o total de registros
-            setTotalPaginas(response.data.totalPaginas);
-        } catch (error) {
-            alert(error.response.data.retorno.mensagem);
-        } finally {
-            setLoading(false);
-        }
+        const url = `${apiUrls.cursosUrl}?page=${paginaAtual}&limit=${registrosPorPagina}`;
+        requestDados(axiosConfig, url, setLoading, setCursos, setTotalRegistros, setTotalPaginas);
     };
 
     useEffect(() => {
@@ -49,36 +33,15 @@ const ListarCursos = () => {
     }, [registrosPorPagina]);
 
     const remove = async (curso_id) => {
-        // Exibir uma mensagem de confirmação
-        const confirmDelete = window.confirm(`Tem certeza de que deseja excluir este curso ${curso_id}? Esta ação não pode ser desfeita.`);
-
-        if (!confirmDelete) {
-            // Se o usuário cancelar, interrompa a execução
-            return;
-        }
-
-        const requestOptions = {
-            headers: {
-                "Content-Type": "application/json",
-            },
-            withCredentials: true,  // Ensures that cookies are sent with the request
-        };
-
-        try {
-            setLoading(true);
-            const response = await axios.delete(`${apiUrls.cursosUrl}/${curso_id}`, requestOptions);
-            alert(response.data.retorno.mensagem);
-        } catch (error) {
-            alert(error.response.data.retorno.mensagem);
-        } finally {
-            //  recarrega os dados se a pagina for igual a 1
-            if (paginaAtual == 1) {
-                requestCursos();
-            }
-
-            // troca a pagina pra 1 e recarrega os dados se o valor anterior não for 1
-            setPaginaAtual(1);
-        }
+        requestDelete(
+            `Tem certeza de que deseja excluir este curso ${curso_id}? Esta ação não pode ser desfeita.`,
+            axiosConfig,
+            `${apiUrls.cursosUrl}/${curso_id}`,
+            setLoading,
+            requestCursos,
+            setPaginaAtual,
+            paginaAtual
+        );
     };
 
     const handleNextPage = () => {

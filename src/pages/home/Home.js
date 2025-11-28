@@ -1,5 +1,4 @@
-import axios from "axios";
-import { useContext, useEffect, useState, useCallback } from "react";
+import { useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { apiUrls } from "../../apiUrls";
 import { ContextGlobal } from "../../context/GlobalContext";
@@ -8,8 +7,9 @@ import { MdDeleteOutline, MdOutlineEdit, MdKeyboardArrowRight, MdKeyboardArrowLe
 import { GrDocumentPdf } from "react-icons/gr";
 import DescriptionHeader from "../../components/descriptionHeader/DescriptionHeader";
 import Loading from "../../components/loading/Loading";
-import Cookies from 'js-cookie';
-import { jwtDecode } from "jwt-decode";
+import { createAxiosConfig } from "../../createAxiosConfig";
+import { requestDados } from '../../funcoes/requestDados';
+import { requestDelete } from '../../funcoes/requestDelete';
 
 const Home = () => {
     const [users, setUsers] = useState([]);
@@ -21,6 +21,7 @@ const Home = () => {
     const [tipoUser, setTipoUser] = useState(0);
     const { cursoId } = useContext(ContextGlobal);
     const navigate = useNavigate();
+    const axiosConfig = createAxiosConfig(setLoading);
 
     const formatDate = (dateString) => {
         if (!dateString || dateString === "0000-00-00T00:00:00.000Z") return "Não registrado";
@@ -28,77 +29,31 @@ const Home = () => {
         return date.toLocaleString("pt-BR");
     };
 
-    const handleDados = useCallback(async () => {
-        setLoading(true);
-        const requestOptions = {
-            headers: { "Content-Type": "application/json" },
-            withCredentials: true,
-        };
-
-        try {
-            const url = `${apiUrls.userUrl}?tipo_user_filter=${tipoUser}&page=${paginaAtual}&limit=${registrosPorPagina}`;
-
-            const { data } = await axios.get(url, requestOptions);
-
-            setUsers(data.registros || []);
-            setTotalRegistros(data.totalRegistros || 0);
-            setTotalPaginas(data.totalPaginas || 0);
-        } catch (error) {
-            console.error("Erro ao carregar dados:", error.response?.data || error.message);
-        } finally {
-            setLoading(false);
-        }
-    }, [cursoId, tipoUser, paginaAtual, registrosPorPagina]);
+    const handleDados = async () => {
+        const url = `${apiUrls.userUrl}?tipo_user_filter=${tipoUser}&page=${paginaAtual}&limit=${registrosPorPagina}`;
+        requestDados(axiosConfig, url, setLoading, setUsers, setTotalRegistros, setTotalPaginas);
+    };
 
     useEffect(() => {
         handleDados();
-    }, [handleDados]);
+    }, [cursoId, tipoUser, paginaAtual, registrosPorPagina]);
 
     const editar = (usuario_id) => navigate(`/usuario/update/${usuario_id}`);
 
     const remove = async (usuario_id) => {
-        const confirmDelete = window.confirm("Tem certeza de que deseja excluir este usuário? Esta ação não pode ser desfeita.");
-        if (!confirmDelete) return;
-
-        setLoading(true);
-        const requestOptions = {
-            headers: { "Content-Type": "application/json" },
-            withCredentials: true,
-        };
-
-        try {
-            const { data } = await axios.delete(`${apiUrls.userUrl}/${usuario_id}`, requestOptions);
-            alert(data.retorno.mensagem || "Usuário excluído com sucesso!");
-            handleDados(); // Recarrega os dados após exclusão
-        } catch (error) {
-            console.error("Erro ao excluir usuário:", error.response?.data || error.message);
-        } finally {
-            setLoading(false);
-        }
+        requestDelete(
+            "Tem certeza de que deseja excluir este usuário? Esta ação não pode ser desfeita.",
+            axiosConfig,
+            `${apiUrls.userUrl}/${usuario_id}`,
+            setLoading,
+            requestDados,
+            setPaginaAtual,
+            paginaAtual
+        );
     };
 
     const handleNextPage = () => paginaAtual < totalPaginas && setPaginaAtual(paginaAtual + 1);
     const handlePrevPage = () => paginaAtual > 1 && setPaginaAtual(paginaAtual - 1);
-    const [decoded, setDecoded] = useState({});
-
-    // const decodeJwt = () => {
-    //     const token = Cookies.get('token');
-    //     if (token) {
-    //         try {
-    //             const decodedData = jwtDecode(token);
-    //             setDecoded(decodedData);
-    //         } catch (error) {
-    //             console.error("Erro ao decodificar token:", error);
-    //             setDecoded({ tipo: 0 });
-    //         }
-    //     } else {
-    //         setDecoded({ tipo: 0 });
-    //     }
-    // };
-
-    // useEffect(() => {
-    //     decodeJwt();
-    // }, []);
 
     if (loading) return <Loading />;
 
@@ -107,12 +62,10 @@ const Home = () => {
             <div className={styles.areaListarUsuarios}>
                 <DescriptionHeader descricao="Listagem de Usuários" />
                 <button onClick={() => navigate('/user/create')} style={{ height: 50, width: 50, borderRadius: 50, border: 'none', cursor: 'pointer', position: 'fixed', bottom: 50, right: 50, fontSize: 25 }}>+</button>
-                {Cookies.get('token') && decoded?.tipo === 1 && (
-                    <select onChange={(e) => setTipoUser(Number(e.target.value))} value={tipoUser}>
-                        <option value="0">Aluno</option>
-                        <option value="1">Administrador</option>
-                    </select>
-                )}
+                <select onChange={(e) => setTipoUser(Number(e.target.value))} value={tipoUser}>
+                    <option value="0">Aluno</option>
+                    <option value="1">Administrador</option>
+                </select>
                 <div className={styles.tabelaUsuariosScroll}>
                     <table>
                         <thead>
