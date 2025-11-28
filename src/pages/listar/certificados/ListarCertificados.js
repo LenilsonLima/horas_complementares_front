@@ -8,6 +8,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { createAxiosConfig } from "../../../createAxiosConfig.js";
 import { requestDados } from "../../../funcoes/requestDados";
 import { requestDelete } from "../../../funcoes/requestDelete";
+import { MdOutlineAdd } from "react-icons/md";
 
 const ListarCertificados = () => {
     const [certificados, setCertificados] = useState([]);
@@ -74,8 +75,7 @@ const ListarCertificados = () => {
     return (
         <div className={styles.containerListarCertificados}>
             <div className={styles.areaListarCertificados}>
-                <DescriptionHeader descricao="Listagem de Certificados" />
-                <button onClick={() => navigation('/curso/create')} style={{ height: 50, width: 50, borderRadius: 50, border: 'none', cursor: 'pointer', position: 'fixed', bottom: 50, right: 50, fontSize: 25 }}>+</button>
+                <DescriptionHeader descricao="Listagem de Certificados" icone={<MdOutlineAdd onClick={() => navigation('/certificado/create')} />} />
                 <div className={styles.tabelaCertificadosScroll}>
                     <table>
                         {certificados?.length > 0 ?
@@ -83,9 +83,7 @@ const ListarCertificados = () => {
                                 <thead>
                                     <tr>
                                         <th>Descricao</th>
-                                        <th>User</th>
-                                        <th>Data Emissao</th>
-                                        <th>Validade</th>
+                                        <th>Usuário</th>
                                         <th>Status</th>
                                         <th>Upload</th>
                                         <th>Ações</th>
@@ -96,8 +94,6 @@ const ListarCertificados = () => {
                                         <tr key={item?.id}>
                                             <td><a href={item?.s3_url} target="_blank">{item?.descricao}</a></td>
                                             <td>{item?.usuarios_nome}</td>
-                                            <td>{String(item?.data_emissao).substring(0, 10).split('-').reverse().join('/')}</td>
-                                            <td>{String(item?.validade).substring(0, 10).split('-').reverse().join('/')}</td>
                                             <td>{item?.status === 0 && 'pendente'}{item?.status === 1 && 'aprovado'}{item?.status === 2 && 'rejeitado'}</td>
                                             <td>{String(item?.created_at).substring(0, 10).split('-').reverse().join('/')}</td>
                                             <td style={{ padding: 5 }}>

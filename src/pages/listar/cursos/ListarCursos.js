@@ -8,6 +8,8 @@ import styles from './ListarCursos.module.scss';
 import { createAxiosConfig } from "../../../createAxiosConfig.js";
 import { requestDelete } from "../../../funcoes/requestDelete.js";
 import { requestDados } from "../../../funcoes/requestDados.js";
+import { MdOutlineAdd } from "react-icons/md";
+
 const ListarCursos = () => {
     const [cursos, setCursos] = useState([]);
     const navigation = useNavigate();
@@ -65,8 +67,7 @@ const ListarCursos = () => {
     return (
         <div className={styles.containerListarCursos}>
             <div className={styles.areaListarCursos}>
-                <DescriptionHeader descricao="Listagem de Cursos" />
-                <button onClick={() => navigation('/curso/create')} style={{ height: 50, width: 50, borderRadius: 50, border: 'none', cursor: 'pointer', position: 'fixed', bottom: 50, right: 50, fontSize: 25 }}>+</button>
+                <DescriptionHeader descricao="Listagem de Cursos" icone={<MdOutlineAdd onClick={() => navigation('/curso/create')} />} />
                 <div className={styles.tabelaCursosScroll}>
                     <table>
                         {cursos?.length > 0 ?

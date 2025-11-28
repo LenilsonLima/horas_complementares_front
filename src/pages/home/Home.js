@@ -10,6 +10,7 @@ import Loading from "../../components/loading/Loading";
 import { createAxiosConfig } from "../../createAxiosConfig";
 import { requestDados } from '../../funcoes/requestDados';
 import { requestDelete } from '../../funcoes/requestDelete';
+import { MdOutlineAdd } from "react-icons/md";
 
 const Home = () => {
     const [users, setUsers] = useState([]);
@@ -46,7 +47,7 @@ const Home = () => {
             axiosConfig,
             `${apiUrls.userUrl}/${usuario_id}`,
             setLoading,
-            requestDados,
+            handleDados,
             setPaginaAtual,
             paginaAtual
         );
@@ -60,8 +61,7 @@ const Home = () => {
     return (
         <div className={styles.containerListarUsuarios}>
             <div className={styles.areaListarUsuarios}>
-                <DescriptionHeader descricao="Listagem de Usuários" />
-                <button onClick={() => navigate('/user/create')} style={{ height: 50, width: 50, borderRadius: 50, border: 'none', cursor: 'pointer', position: 'fixed', bottom: 50, right: 50, fontSize: 25 }}>+</button>
+                <DescriptionHeader descricao="Listagem de Usuários" icone={<MdOutlineAdd onClick={() => navigate('/user/create')} />} />
                 <select onChange={(e) => setTipoUser(Number(e.target.value))} value={tipoUser}>
                     <option value="0">Aluno</option>
                     <option value="1">Administrador</option>

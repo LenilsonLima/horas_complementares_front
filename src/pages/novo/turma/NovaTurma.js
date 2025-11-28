@@ -1,30 +1,21 @@
-import axios from "axios";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { apiUrls } from "../../../apiUrls";
 import Loading from "../../../components/loading/Loading";
+import { createAxiosConfig } from "../../../createAxiosConfig";
+import { requestCreate } from "../../../funcoes/requestCreate";
+import { requestDados } from "../../../funcoes/requestDados";
 
 function NovaTurma() {
     const [loading, setLoading] = useState(true);
     const [cursos, setCursos] = useState([]);
+    const [totalRegistros, setTotalRegistros] = useState(9999999999);
+    const [totalPaginas, setTotalPaginas] = useState(1);
     const navigation = useNavigate();
+    const axiosConfig = createAxiosConfig(setLoading);
 
     const fetchCursos = async () => {
-        try {
-            setLoading(true);
-            const requestOptions = {
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                withCredentials: true,
-            };
-            const response = await axios.get(apiUrls.cursosUrl, requestOptions);
-            setCursos(response.data.registros); // Supondo que a resposta venha como { registros: [] }
-        } catch (error) {
-            alert(error.response.data.retorno.mensagem)
-        } finally {
-            setLoading(false);
-        }
+        requestDados(axiosConfig, apiUrls.cursosUrl, setLoading, setCursos, setTotalRegistros, setTotalPaginas);
     }
 
     useEffect(() => {
@@ -38,36 +29,16 @@ function NovaTurma() {
 
         const ano_inicio = parseInt(formValues.ano_inicio);
         const ano_fim = parseInt(formValues.ano_fim);
-        const anoAtual = new Date().getFullYear();
 
-        const anoInicioValid = Number.isInteger(ano_inicio) && ano_inicio > 0 && ano_inicio <= anoAtual;
-        if (!anoInicioValid) {
-            alert('Ano de início inválido, tente novamente.');
+        const anoValid = ano_inicio <= ano_fim;
+        if (!anoValid) {
+            alert('Periodo informado é inválido, tente novamente.');
             return;
         }
 
-        const anoFimValid = Number.isInteger(ano_fim) && ano_fim > anoAtual && ano_fim <= (anoAtual + 10);
-        if (!anoFimValid) {
-            alert('Ano de fim inválido, tente novamente.');
-            return;
-        }
-
-        try {
-            setLoading(true);
-            const requestOptions = {
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                withCredentials: true,
-            };
-            const response = await axios.post(apiUrls.turmasUrl, formValues, requestOptions);
-            alert(response.data.retorno.mensagem);
-            navigation(-1);
-        } catch (error) {
-            setLoading(false);
-            alert(error.response.data.retorno.mensagem)
-        }
+        requestCreate(axiosConfig, apiUrls.turmasUrl, formValues, setLoading, navigation);
     }
+
     if (loading) {
         return (
             <Loading />

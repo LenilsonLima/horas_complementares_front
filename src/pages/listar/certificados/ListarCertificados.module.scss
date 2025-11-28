@@ -12,6 +12,7 @@
             display: flex;
             flex-direction: column;
             row-gap: 20px;
+            width: 100%;
 
             select {
                 padding: 5px;
@@ -30,6 +31,7 @@
                 table {
                     border-collapse: collapse;
                     font-size: 11px;
+                    width: 100%;
                     min-width: 1600px;
 
                     thead {
@@ -74,13 +76,15 @@
                     }
                 }
             }
-            .controlePaginacao{
+
+            .controlePaginacao {
                 display: flex;
                 justify-content: center;
                 align-items: center;
                 font-size: 11px;
                 column-gap: 5px;
-                button{
+
+                button {
                     padding: 5px 10px;
                     display: flex;
                     justify-content: center;

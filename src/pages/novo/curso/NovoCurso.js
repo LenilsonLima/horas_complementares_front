@@ -1,12 +1,14 @@
-import axios from "axios";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { apiUrls } from "../../../apiUrls";
 import Loading from "../../../components/loading/Loading";
+import { createAxiosConfig } from "../../../createAxiosConfig";
+import { requestCreate } from "../../../funcoes/requestCreate";
 
 function NovoCurso() {
     const [loading, setLoading] = useState(false);
     const navigation = useNavigate();
+    const axiosConfig = createAxiosConfig(setLoading);
 
 
     const handleSubmit = async (e) => {
@@ -22,23 +24,9 @@ function NovoCurso() {
             return
         }
 
-        try {
-            setLoading(true);
-            const requestOptions = {
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                withCredentials: true,
-            };
-            const response = await axios.post(apiUrls.cursosUrl, formValues, requestOptions);
-            alert(response.data.retorno.mensagem);
-            navigation(-1);
-
-        } catch (error) {
-            setLoading(false);
-            alert(error.response.data.retorno.mensagem)
-        }
+        requestCreate(axiosConfig, apiUrls.cursosUrl, formValues, setLoading, navigation);
     }
+
     if (loading) {
         return (
             <Loading/>

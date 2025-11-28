@@ -10,8 +10,6 @@ function AlterarCertificado() {
     const navigation = useNavigate();
     const [arquivo, setArquivo] = useState('');
     const [descricao, setDescricao] = useState('');
-    const [dataEmissao, setDataEmissao] = useState('');
-    const [validade, setValidade] = useState('');
 
     const requestCertificado = async () => {
         try {
@@ -26,8 +24,6 @@ function AlterarCertificado() {
             const response = await axios.get(`${apiUrls.certificadosUrl}/${params.certificado_id}/${params.usuario_id}`, requestOptions);
 
             setDescricao(response.data.registros[0]?.descricao || '');
-            setDataEmissao(response.data.registros[0]?.data_emissao?.substring(0, 10) || '');
-            setValidade(response.data.registros[0]?.validade?.substring(0, 10) || '');
             setLoading(false);
         } catch (error) {
             alert(error.response?.data?.retorno?.mensagem || "Erro ao carregar o certificado.");
@@ -45,7 +41,7 @@ function AlterarCertificado() {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        if (!arquivo || !descricao || !dataEmissao || !validade) {
+        if (!arquivo || !descricao) {
             alert("Todos os campos são obrigatórios, tente novamente.");
             return;
         }
@@ -53,8 +49,6 @@ function AlterarCertificado() {
         const formData = new FormData();
         formData.append("file", arquivo);
         formData.append("descricao", descricao);
-        formData.append("data_emissao", dataEmissao);
-        formData.append("validade", validade);
 
         try {
             setLoading(true);
@@ -83,14 +77,6 @@ function AlterarCertificado() {
         <div>
             <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', rowGap: 10, width: 500 }}>
                 <input value={descricao} onChange={(e) => setDescricao(e.target.value)} style={{ padding: 10 }} type="text" name="descricao" placeholder="Descrição" required />
-                <label style={{ width: '100%', display: 'flex', flexDirection: 'column' }}>
-                    <span style={{ fontSize: 15, textAlign: 'left' }}>Data de Emissão</span>
-                    <input value={dataEmissao} onChange={(e) => setDataEmissao(e.target.value)} style={{ padding: 10, maxWidth: '100%' }} type="date" name="data_emissao" required />
-                </label>
-                <label style={{ width: '100%', display: 'flex', flexDirection: 'column' }}>
-                    <span style={{ fontSize: 15, textAlign: 'left' }}>Data de Validade</span>
-                    <input value={validade} onChange={(e) => setValidade(e.target.value)} style={{ padding: 10, maxWidth: '100%' }} type="date" name="validade" required />
-                </label>
                 <label htmlFor="arquivo" style={{ backgroundColor: '#fff', borderRadius: 3, display: 'flex', padding: 10, cursor: 'pointer' }}>
                     <span style={{ color: '#000', fontSize: 15 }}>{arquivo.name || "Selecione um arquivo"}</span>
                     <input

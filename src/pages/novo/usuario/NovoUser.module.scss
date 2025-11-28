@@ -1,0 +1,61 @@
+  .containerListarTurmas {
+      flex-grow: 1; // Faz com que o .body-listar-user ocupe o restante da tela
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      align-items: center;
+
+      .areaListarTurmas {
+          background-color: #fff;
+          overflow: hidden;
+          padding: 10px;
+          display: flex;
+          flex-direction: column;
+          row-gap: 20px;
+          width: 100%;
+
+          form {
+              display: flex;
+              flex-wrap: wrap;
+              gap: 30px;
+              border: solid 1px #ccc;
+              padding: 20px;
+              align-items: flex-end;
+              border-radius: 5px;
+              label {
+                  display: flex;
+                  flex-direction: column;
+                  min-width: 350px;
+                  flex-grow: 1;
+                  flex-basis: 1;
+                  gap: 10px;
+
+                  span {
+                      font-size: 15px;
+                  }
+
+                  select,
+                  input {
+                      padding: 10px;
+                      height: 40px;
+                      border: solid 1px #ccc;
+                      background-color: transparent;
+                  }
+
+
+              }
+
+              button {
+                  min-width: 350px;
+                  flex-grow: 1;
+                  flex-basis: 1;
+                  padding: 10px;
+                  height: 40px;
+                  background-color: #107321;
+                  border: none;
+                  color: #fff;
+                  text-transform: uppercase;
+              }
+          }
+      }
+  }

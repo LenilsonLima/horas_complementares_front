@@ -8,6 +8,7 @@ import styles from './ListarTurmas.module.scss';
 import { createAxiosConfig } from "../../../createAxiosConfig.js";
 import { requestDelete } from "../../../funcoes/requestDelete.js";
 import { requestDados } from "../../../funcoes/requestDados.js";
+import { MdOutlineAdd } from "react-icons/md";
 
 const ListarTurmas = () => {
     const [turmas, setTurmas] = useState([]);
@@ -67,8 +68,7 @@ const ListarTurmas = () => {
     return (
         <div className={styles.containerListarTurmas}>
             <div className={styles.areaListarTurmas}>
-                <DescriptionHeader descricao="Listagem de Turmas" />
-                <button onClick={() => navigation('/turma/create')} style={{ height: 50, width: 50, borderRadius: 50, border: 'none', cursor: 'pointer', position: 'fixed', bottom: 50, right: 50, fontSize: 25 }}>+</button>
+                <DescriptionHeader descricao="Listagem de Turmas" icone={<MdOutlineAdd onClick={() => navigation('/turma/create')} />} />
                 <div className={styles.tabelaTurmasScroll}>
                     <table>
                         {turmas?.length > 0 ?

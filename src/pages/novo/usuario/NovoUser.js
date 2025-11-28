@@ -1,30 +1,24 @@
-import axios from "axios";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { apiUrls } from "../../../apiUrls";
 import Loading from '../../../components/loading/Loading';
+import { createAxiosConfig } from "../../../createAxiosConfig";
+import { requestCreate } from "../../../funcoes/requestCreate";
+import { requestDados } from "../../../funcoes/requestDados";
+import styles from './NovoUser.module.scss';
+import DescriptionHeader from "../../../components/descriptionHeader/DescriptionHeader";
+
 
 function NovoUser() {
     const [loading, setLoading] = useState(false);
     const navigation = useNavigate();
     const [turmas, setTurmas] = useState([]);
-    // Função para buscar as turmas disponíveis
+    const [totalRegistros, setTotalRegistros] = useState(0);
+    const [totalPaginas, setTotalPaginas] = useState(1);
+    const axiosConfig = createAxiosConfig(setLoading);
+
     const fetchTurmas = async () => {
-        try {
-            setLoading(true);
-            const requestOptions = {
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                withCredentials: true,
-            };
-            const response = await axios.get(apiUrls.turmasUrl, requestOptions);
-            setTurmas(response.data.registros);
-        } catch (error) {
-            alert(error.response.data.retorno.mensagem)
-        } finally {
-            setLoading(false);
-        }
+        requestDados(axiosConfig, apiUrls.turmasUrl, setLoading, setTurmas, setTotalRegistros, setTotalPaginas);
     }
 
     useEffect(() => {
@@ -35,52 +29,71 @@ function NovoUser() {
         e.preventDefault();
         const formData = new FormData(e.target);
         const formValues = Object.fromEntries(formData);
-        try {
-            setLoading(true);
-            const requestOptions = {
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                withCredentials: true,
-            };
-            const response = await axios.post(apiUrls.userUrl, formValues, requestOptions);
-            alert(response.data.retorno.mensagem);
-            navigation(-1);
-
-        } catch (error) {
-            setLoading(false);
-            alert(error.response.data.retorno.mensagem)
-        }
+        requestCreate(axiosConfig, apiUrls.userUrl, formValues, setLoading, navigation);
     }
     if (loading) {
         return (
-            <Loading/>
+            <Loading />
         )
     }
     return (
-        <div>
-            <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', rowGap: 10, width: 500 }}>
-                <input type="text" placeholder="Nome" style={{ padding: 10 }} required name="nome" />
-                <input type="email" placeholder="Email" style={{ padding: 10 }} required name="email" />
-                <input type="number" placeholder="CPF" style={{ padding: 10 }} required name="cpf" />
-                <input type="password" placeholder="Senha" style={{ padding: 10 }} required name="senha" />
-                <input type="text" placeholder="matricula" style={{ padding: 10 }} required name="matricula" />
-                <input type="number" placeholder="semestre" style={{ padding: 10 }} required name="semestre" />
-                <input type="text" placeholder="RA" style={{ padding: 10 }} required name="ra" />
-                <select style={{ padding: 10 }} name="turma_id">
-                    <option value="">Selecione a Turma</option>
-                    {turmas.map(turma => (
-                        <option key={turma.id} value={turma.id}>
-                            {turma.nome}
-                        </option>
-                    ))}
-                </select>
-                <select style={{ padding: 10 }} name="tipo">
-                    <option value={0}>Aluno</option>
-                    <option value={1}>Administrador</option>
-                </select>
-                <input type="submit" style={{ padding: 10 }} />
-            </form>
+        <div className={styles.containerListarTurmas}>
+            <div className={styles.areaListarTurmas}>
+                <DescriptionHeader descricao="Cadastro de Usuário" />
+                <form onSubmit={handleSubmit} >
+                    <label>
+                        <span>Nome:</span>
+                        <input type="text" placeholder="Nome" required name="nome" />
+                    </label>
+                    <label>
+                        <span>E-mail:</span>
+                        <input type="email" placeholder="Email" required name="email" />
+                    </label>
+                    <label>
+                        <span>CPF:</span>
+                        <input type="number" placeholder="CPF" required name="cpf" />
+                    </label>
+                    <label>
+                        <span>Senha:</span>
+                        <input type="password" placeholder="Senha" required name="senha" />
+                    </label>
+                    <label>
+                        <span>Confirmar Senha:</span>
+                        <input type="password" placeholder="Senha" required name="confirmar_senha" />
+                    </label>
+                    <label>
+                        <span>Matrícula:</span>
+                        <input type="text" placeholder="matricula" required name="matricula" />
+                    </label>
+                    <label>
+                        <span>Semestre:</span>
+                        <input type="number" placeholder="semestre" required name="semestre" />
+                    </label>
+                    <label>
+                        <span>RA:</span>
+                        <input type="text" placeholder="RA" required name="ra" />
+                    </label>
+                    <label>
+                        <span>Turma:</span>
+                        <select name="turma_id">
+                            <option value="">Selecione a Turma</option>
+                            {turmas.map(turma => (
+                                <option key={turma.id} value={turma.id}>
+                                    {turma.nome}
+                                </option>
+                            ))}
+                        </select>
+                    </label>
+                    <label>
+                        <span>Tipo:</span>
+                        <select name="tipo">
+                            <option value={0}>Aluno</option>
+                            <option value={1}>Administrador</option>
+                        </select>
+                    </label>
+                    <button>Cadastrar</button>
+                </form>
+            </div>
         </div>
     );
 }

@@ -1,16 +1,16 @@
-import axios from "axios";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { apiUrls } from "../../../apiUrls";
 import Loading from '../../../components/loading/Loading';
+import { requestCreate } from "../../../funcoes/requestCreate";
+import { createAxiosConfig } from "../../../createAxiosConfig";
 
 function NovoCertificado() {
     const [loading, setLoading] = useState(false);
     const navigation = useNavigate();
     const [arquivo, setArquivo] = useState('');
     const [descricao, setDescricao] = useState('');
-    const [dataEmissao, setDataEmissao] = useState('');
-    const [validade, setValidade] = useState('');
+    const axiosConfig = createAxiosConfig(setLoading);
 
     const handleArquivo = (e) => {
         setArquivo(e.target.files[0]);
@@ -26,25 +26,13 @@ function NovoCertificado() {
         const formData = new FormData();
         formData.append("file", arquivo);
         formData.append("descricao", descricao);
-        formData.append("data_emissao", dataEmissao);
-        formData.append("validade", validade);
-        try {
-            setLoading(true);
-            const requestOptions = {
-                withCredentials: true, // Ensures that cookies are sent with the request
-            };
-            const response = await axios.post(apiUrls.certificadosUrl, formData, requestOptions);
-            alert(response.data.retorno.mensagem)
-            navigation(-1);
-        } catch (error) {
-            setLoading(false);
-            alert(error.response?.data?.retorno?.mensagem || "Erro ao enviar o arquivo.");
-        }
+
+        requestCreate(axiosConfig, apiUrls.certificadosUrl, formData, setLoading, navigation);
     };
 
     if (loading) {
         return (
-            <Loading/>
+            <Loading />
         );
     }
 
@@ -52,14 +40,6 @@ function NovoCertificado() {
         <div>
             <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', rowGap: 10, width: 500 }}>
                 <input defaultValue={descricao} onChange={(e) => setDescricao(e.target.value)} style={{ padding: 10 }} type="text" name="descricao" placeholder="Descrição" required />
-                <label style={{ width: '100%', display: 'flex', flexDirection: 'column' }}>
-                    <span style={{ fontSize: 15, textAlign: 'left' }}>Data de Emissão</span>
-                    <input defaultValue={dataEmissao} onChange={(e) => setDataEmissao(e.target.value)} style={{ padding: 10, maxWidth: '100%' }} type="date" name="data_emissao" required />
-                </label>
-                <label style={{ width: '100%', display: 'flex', flexDirection: 'column' }}>
-                    <span style={{ fontSize: 15, textAlign: 'left' }}>Data de Validade</span>
-                    <input defaultValue={validade} onChange={(e) => setValidade(e.target.value)} style={{ padding: 10, maxWidth: '100%' }} type="date" name="validade" required />
-                </label>
                 <label htmlFor="arquivo" style={{ backgroundColor: '#fff', borderRadius: 3, display: 'flex', padding: 10, cursor: 'pointer' }}>
                     <span style={{ color: '#000', fontSize: 15 }}>{arquivo.name || "seleione um arquivo"}</span>
                     <input

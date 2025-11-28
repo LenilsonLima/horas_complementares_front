@@ -3,4 +3,13 @@
     padding: 20px;
     border-top: solid 4px #107321;
     width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    height: 74px;
+
+    svg {
+        font-size: 30px;
+        cursor: pointer;
+    }
 }

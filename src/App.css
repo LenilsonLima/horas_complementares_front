@@ -1,6 +1,24 @@
-*{
+* {
   padding: 0px;
   box-sizing: border-box;
   margin: 0px;
   font-family: Verdana, Geneva, Tahoma, sans-serif;
+}
+
+button {
+  cursor: pointer;
+  transition: .5s ease-in-out;
+  border-radius: 5px;
+  border: none;
+}
+
+button:hover {
+  opacity: .7;
+}
+
+select,
+input {
+  border-radius: 5px;
+  outline: none;
+  border: none;
 }
